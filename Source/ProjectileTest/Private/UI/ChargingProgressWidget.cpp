@@ -45,5 +45,5 @@ float UChargingProgressWidget::GetProgressBarRate()
 
 void UChargingProgressWidget::AddProgressBarRate( float Deltatime )
 {
-	CurrentChargingSecond += Deltatime;
+	if( CurrentChargingSecond < MaxChargingSecond ) CurrentChargingSecond += Deltatime;
 }

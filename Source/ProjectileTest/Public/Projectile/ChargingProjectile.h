@@ -21,6 +21,7 @@ public :
 
 private:
 
+	// Scale πË¿≤ 
 	float ProjectileScaleRate ;
 
 public:

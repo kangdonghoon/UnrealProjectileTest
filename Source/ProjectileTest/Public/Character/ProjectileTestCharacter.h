@@ -54,7 +54,7 @@ private:
 	FTimerHandle InputPressTimeHandler;
 
 	/** 발사체 타입에따른 스폰 data 리턴*/
-	struct FProjectileSpawnData GetSpawnDataBySpawnType( EProjectileSpawnType SpawnType );
+	struct FProjectileSpawnData GetSpawnDataBySpawnType( const EProjectileSpawnType& SpawnType );
 
 	/** 캐릭터 기준 프로젝타일 생성하는 위치 반환 */
 	const FVector GetProjectileSpawnLocation();
@@ -67,6 +67,9 @@ protected:
 	// The animation to play while idle (standing still)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 	class UPaperFlipbook* IdleAnimation;
+
+	/** 생성 기준점에 생성 offset 값을 추가 적용 */
+	FVector2D SpawnLocationOffset;
 
 	/** Called to choose the correct animation to play based on the character's movement state */
 	void UpdateAnimation();

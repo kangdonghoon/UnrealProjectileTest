@@ -34,7 +34,7 @@ AProjectileBase::AProjectileBase()
 	StaticMeshComp->SetRelativeLocation( FVector( 0.0f , 0.0f , CollisionComp->GetScaledSphereRadius()*-1 ) );
 	StaticMeshComp->SetupAttachment( RootComponent );
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshFinder( TEXT( "StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere'" ) );
+	 ConstructorHelpers::FObjectFinder<UStaticMesh> MeshFinder( TEXT( "StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere'" ) );
 	if(MeshFinder.Succeeded() == true)
 	{
 		StaticMeshComp->SetStaticMesh( MeshFinder.Object );

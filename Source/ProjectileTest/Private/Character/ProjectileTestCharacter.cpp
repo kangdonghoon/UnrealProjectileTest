@@ -9,10 +9,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
+#include "TimerManager.h"
 #include "Projectile/ProjectileSpawnerComponent.h"
 #include "UI/WidgetManagerComponent.h"
-#include "TimerManager.h"
-#include "Kismet/KismetMathLibrary.h"
+
+//#include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC( SideScrollerCharacter , Log , All );
 
@@ -84,6 +85,9 @@ AProjectileTestCharacter::AProjectileTestCharacter()
 
 	ProjectileSpawner = CreateDefaultSubobject<UProjectileSpawnerComponent>( TEXT( "ProjectileSpawner" ) );
 
+	//기준점에서 플레이어 앞 방향 20 위로 50 추가
+	SpawnLocationOffset = FVector2D( 20.0f , 50.0f );
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -124,12 +128,12 @@ void AProjectileTestCharacter::BeginPlay()
 		}
 	}else
 	{
-		//LocalControll Character가 아니면 콜리전 타입 Pawn 설정
+		//LocalControll Player Character가 아니면 콜리전 타입 Pawn 설정
 		GetCapsuleComponent()->SetCollisionObjectType( ECollisionChannel::ECC_Pawn );
 	}
 }
 
-FProjectileSpawnData AProjectileTestCharacter::GetSpawnDataBySpawnType( EProjectileSpawnType SpawnType )
+FProjectileSpawnData AProjectileTestCharacter::GetSpawnDataBySpawnType( const EProjectileSpawnType& SpawnType )
 {
 	FProjectileSpawnData SpawnData;
 	SpawnData.SpawnLocation = GetProjectileSpawnLocation();
@@ -143,9 +147,9 @@ const FVector AProjectileTestCharacter::GetProjectileSpawnLocation()
 {
 	FVector Location = GetCapsuleComponent()->GetComponentLocation();
 
-	Location.Z = Location.Z - GetCapsuleComponent()->GetScaledCapsuleHalfHeight() + 50.0f;
+	Location.Z = Location.Z - GetCapsuleComponent()->GetScaledCapsuleHalfHeight() + SpawnLocationOffset.Y;
 
-	Location = Location + GetActorForwardVector() * 20.0f;
+	Location = Location + GetActorForwardVector() * SpawnLocationOffset.X;
 
 	return Location;
 }
@@ -182,6 +186,7 @@ void AProjectileTestCharacter::MoveRight( float Value )
 
 void AProjectileTestCharacter::PressFirstFireInput()
 {
+	// 타이머 시작
 	StartInputPressTimer();
 }
 
@@ -250,7 +255,7 @@ void AProjectileTestCharacter::StartInputPressTimer()
 	{   // 1초마다 loop 되는 타이머 생성
 		GetWorldTimerManager().SetTimer( InputPressTimeHandler , this , &AProjectileTestCharacter::CountInputPress , 1.0f , true , 1.0f );
 	}
-
+	// TimerWidget 추가
 	if ( WidgetManagerComp != nullptr )
 	{
 		WidgetManagerComp->ShowChargingProgressWidget( MaxInputPressSecond );
@@ -265,7 +270,7 @@ void AProjectileTestCharacter::StopInputPressTimer()
 
 		InpuPressTimePerSecond = 0.f;
 	}
-
+	// TimerWidget 제거
 	if ( WidgetManagerComp != nullptr )
 	{
 		WidgetManagerComp->HiddenChargingProgressWidget();
